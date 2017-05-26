@@ -28,7 +28,12 @@ skiplist *glistP = &glist;
 /* Initialize the global skiplist */
 void list_init()
 {
-	node *dummy = malloc(sizeof(node));
+	node *dummy = (node *)malloc(sizeof(node));
+	if (!dummy) {
+		printf("Unable to allocate memory !!\n");
+		exit(-1);
+	}
+
 	glistP->header = dummy;
 	dummy->val = INT_MAX;
 
@@ -54,6 +59,11 @@ void insert(int value)
 	}
 
 	node *tmp = malloc(sizeof(node));
+	if (!tmp) {
+		printf("Unable to allocate memory !!\n");
+		exit(-1);
+	}
+
 	tmp->val = value;
 
 	int lvl = rand() % MAXLVL;
