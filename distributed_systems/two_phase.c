@@ -10,8 +10,10 @@
 #include <pthread.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define MAX 2
+#define MAX 4
 int x = 100;
 int y = 200;
 int delta;
@@ -38,16 +40,18 @@ void *consumer(void *arg)
 	sprintf(filename, "Thread.%d.tmp", id);
 	sprintf(filename1, "Thread.%d.final", id);
 
-	printf("Starting thread %d\n", id);
+//	printf("Starting thread %d\n", id);
 	while(1) {
 		switch(status[id]) {
 			case PREPARE:
 				{
-				int fd = open(filename, O_WRONLY|O_CREAT);
+				int fd = open(filename, O_WRONLY|O_CREAT, 0755);
+				if (fd == -1) {exit(-1);}
 				printf("delta is %d\n", delta);
-				sprintf(xtion, "old_val = %d, %d, delta = %d\n",
+				bzero(xtion, sizeof(xtion));
+				int nbytes = sprintf(xtion, "old_val = %d, %d, delta = %d\n",
 						x, y, delta);
-				write(fd, xtion, sizeof(xtion));
+				write(fd, xtion, nbytes);
 				close(fd);
 				status[id] = PREPARED;
 				break;
@@ -55,10 +59,13 @@ void *consumer(void *arg)
 			case COMMIT:
 				{
 				int fd = open(filename1,
-						O_APPEND|O_WRONLY|O_CREAT);
-				sprintf(xtion, "new_val = %d, %d\n", x + delta,
+						O_WRONLY|O_CREAT, 0755);
+				if (fd == -1) {exit(-1);}
+
+				bzero(xtion, sizeof(xtion));
+				int nbytes = sprintf(xtion, "new_val = %d, %d\n", x + delta,
 								     y - delta);
-				write(fd, xtion, sizeof(xtion));
+				write(fd, xtion, nbytes);
 				close(fd);
 				status[id] = COMMITTED;
 				break;
@@ -78,6 +85,7 @@ void wait_for_status(state_t id)
 			if (status[i] == id) count++;
 		}
 		if (count == MAX) break;
+		sleep(1);
 	}
 }
 
@@ -94,9 +102,10 @@ int main()
 	pthread_t tid[MAX];
 	int i;
 
-	int id[MAX] = {0, 1};
+	int id[MAX];
 
 	for (i = 0; i < MAX; i++) {
+		id[i] = i;
 		pthread_create(&tid[i], NULL, consumer, &id[i]);
 	}
 
@@ -104,6 +113,7 @@ int main()
 	printf("Enter the delta to be applied : ");
 	scanf("%d", &delta);
 
+	printf("Sendig the request to %d slaves\n", MAX);
 	set_state(PREPARE);
 	wait_for_status(PREPARED);
 	set_state(COMMIT);
