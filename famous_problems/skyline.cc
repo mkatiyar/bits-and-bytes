@@ -85,7 +85,7 @@ void draw_skyline(vector <vector <int>>& buildings)
 			if (heights.empty()) {
 				result.emplace_back(make_pair(e.first, 0));
 			} else if ((*heights.begin()) < -e.second) {
-				result.emplace_back(make_pair(e.first, -e.second));
+				result.emplace_back(make_pair(e.first, *heights.begin()));
 			}
 		}
 	}
