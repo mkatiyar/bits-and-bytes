@@ -1,41 +1,49 @@
+/* Program to draw a circle given the radius using
+ * midpoint circle algorithm.
+ *
+ * Author : Manish Katiyar <mkatiyar@gmail.com>
+ */
 #include <iostream>
-#include <algorithm>
 #include <utility>
+#include <set>
 
 using namespace std;
-void circle(int radius, int npoints)
+
+void circle(int radius)
 {
-	int each = npoints / 4;
-
 	int x = 0, y = radius;
-	int val = radius * radius;
 
-	while (each--) {
-		int a = (x + 1) * (x + 1) + y * y;
-		int b = (x + 1) * (x + 1) + (y - 1) * (y - 1);
-		int c = (x) * (x) + (y - 1) * (y - 1);
+	int h = 1 - radius;
 
-		int val1 = abs(val - a);
-		int val2 = abs(val - b);
-		int val3 = abs(val - c);
+	set <pair <int, int>> result;
 
-		int z = min(val1, min(val2, val3));
-
-		if (z == val1) {
-			x = x + 1;
-			y = y;
-		} else if (z == val2) {
-			x = x + 1;
-			y = y - 1;
+	while (y > x) {
+		result.insert(make_pair(x, y));
+		result.insert(make_pair(y, x));
+		result.insert(make_pair(-x, y));
+		result.insert(make_pair(x, -y));
+		result.insert(make_pair(-x, -y));
+		result.insert(make_pair(y, -x));
+		result.insert(make_pair(-y, -x));
+		if (h < 0) {
+			h = h + 2 * x + 3;
 		} else {
-			x = x;
+			h = h + 2*(x - y) + 5;
 			y = y - 1;
 		}
-		printf("[%d, %d]\n", x, y);
+		x = x + 1;
+	}
+
+	for (auto s : result) {
+		printf("[%d, %d]\n", s.first, s.second);
 	}
 }
 
 int main()
 {
-	circle (2, 32);
+	int radius;
+
+	cout << "Enter the radius of circle : ";
+	cin >> radius;
+	circle (radius);
 }
