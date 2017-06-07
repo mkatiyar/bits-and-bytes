@@ -13,14 +13,17 @@
 
 using namespace std;
 
+/* Maximum value in the BST tree. Values are generated randomly */
+#define MAXVAL 75
+
+/* Global root of the binary tree */
 TreeNode *groot = NULL;
 
-/* Insert a node in tree - recursively */
+/* Insert a node in tree recursively */
 void insert_value_recursive(TreeNode **root, int val)
 {
 	if ((*root) == NULL) {
-		TreeNode *tmp = new TreeNode(val);
-		(*root) = tmp;
+		(*root) = new TreeNode(val);
 		return;
 	}
 
@@ -31,6 +34,19 @@ void insert_value_recursive(TreeNode **root, int val)
 	} else {
 		insert_value_recursive(&head->left, val);
 	}
+}
+
+/* Insert a node in tree iteratively */
+void insert_value_iterative(TreeNode **root, int val)
+{
+	while (*root != NULL) {
+		if (val > (*root)->val) {
+			root = &(*root)->right;
+		} else {
+			root = &(*root)->left;
+		}
+	}
+	(*root) = new TreeNode(val);
 }
 
 /* Tree Traversal routines - recursive version */
@@ -205,15 +221,65 @@ void postorder_walk()
 	postorder_iterative_one_stack(groot);
 }
 
+/* Get a random value for the BST */
+int get_random_value()
+{
+	return (-MAXVAL + (rand() % (2 * MAXVAL)));
+}
 
 /* Create the tree */
 void create_BST(int n)
 {
+	/* Generate a binary tree with given number of nodes.
+	 * Node values are generated randomly and are inserted
+	 * in the existing tree either recursively or iteratively.
+	 */
 	while (n--) {
-		int val;
-		cout << "Enter the node value : ";
-		cin >> val;
-		insert_value_recursive(&groot, val);
+		int val = get_random_value();
+		if (rand() % 2) {
+			insert_value_recursive(&groot, val);
+		} else {
+			insert_value_iterative(&groot, val);
+		}
+	}
+}
+
+/* Search for a value in tree recursively */
+bool is_exist_recursive(TreeNode *root, int val)
+{
+	if (root == NULL) { return false; }
+
+	if (root->val == val) { return true; }
+
+	if (root->val < val) {
+		return is_exist_recursive(root->right, val);
+	} else {
+		return is_exist_recursive(root->left, val);
+	}
+}
+
+/* Search for a value in tree iteratively */
+bool is_exist_iterative(TreeNode *root, int val)
+{
+	while (root) {
+		if (root->val == val) { return true; }
+		if (root->val < val) {
+			root = root->right;
+		} else {
+			root = root->left;
+		}
+	}
+
+	return false;
+}
+
+bool BST_search(TreeNode *root, int val)
+{
+	printf("Searching %3d : ", val);
+	if (rand() % 2) {
+		return is_exist_recursive(root, val);
+	} else {
+		return is_exist_iterative(root, val);
 	}
 }
 
@@ -223,11 +289,24 @@ int main()
 	cout << "Enter the number of nodes in tree :";
 	cin >> n;
 
+	srand(time(NULL));
+
 	create_BST(n);
 
 	inorder_walk();
 	preorder_walk();
 	postorder_walk();
+
+	printf("\n\nPerforming some searches ...\n");
+	int ntests = (rand() % 15 + 1);
+	while (ntests--) {
+		int val = get_random_value();
+		bool ret;
+
+		ret = BST_search(groot, val);
+
+		printf("%s\n", ret ? "EXISTS" : "DOESN'T EXIST");
+	}
 
 	printf("\n");
 }
