@@ -9,7 +9,7 @@
 
 using namespace std;
 
-/* Get the next node, by add 1 to the
+/* Get the next node, by adding 1 to the
  * last set bit in the given node.
  */
 int get_next(int node)
@@ -25,6 +25,7 @@ int get_parent(int node)
 	return node - (node & -node);
 }
 
+/* Helper routine to print a vector */
 void print_vector(vector <int>& nums)
 {
 	printf("[ ");
@@ -34,6 +35,9 @@ void print_vector(vector <int>& nums)
 	printf("]\n");
 }
 
+/* Add delta to the given index. Index is 1 based here instead
+ * of 0.
+ */
 void update_tree(vector <int>& fenwick, int idx, int delta)
 {
 	while (idx < fenwick.size()) {
@@ -42,6 +46,9 @@ void update_tree(vector <int>& fenwick, int idx, int delta)
 	}
 }
 
+/* Compute prefix sum  upto the given index. Index is 1 based here instead
+ * of 0.
+ */
 int query_tree(vector <int>& fenwick, int idx)
 {
 	int sum = 0;
@@ -54,6 +61,7 @@ int query_tree(vector <int>& fenwick, int idx)
 	return sum;
 }
 
+/* Compute the prefix sum by iteration from s till e index */
 int iterate_query(vector <int>&nums, int s, int e)
 {
 	int sum = 0;
@@ -64,6 +72,9 @@ int iterate_query(vector <int>&nums, int s, int e)
 	return sum;
 }
 
+/* Create the fenwick tree. We initialize the tree with zero
+ * and simply use the update function to add deltas.
+ */
 void create_fenwick_tree(vector <int>&fenwick, vector <int>&nums)
 {
 	for (int i = 0; i < nums.size(); i++) {
