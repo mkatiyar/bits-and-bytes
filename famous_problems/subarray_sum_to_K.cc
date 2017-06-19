@@ -20,6 +20,16 @@ void print_vector(vector <int>& nums)
 	printf("]\n");
 }
 
+/* Iterate over given indexes to find the sum */
+int find_iterative_sum(vector <int>& nums, int start, int end)
+{
+	int sum = 0;
+	for (int i = start; i <= end; i++) {
+		sum += nums[i];
+	}
+	printf("Iterative sum [%d - %d] : %d\n\n", start, end, sum);
+}
+
 /* This only works when the integers in the array are
  * non-negative. Keep a sliding window and print it once
  * we find the sum in the window is equal to the desired number.
@@ -36,7 +46,8 @@ void find_non_negative_sum(vector <int>& nums, int k)
 			if (sum == k) {
 				found = true;
 				printf("Indexes %d to %d sum to %d\n",
-					l + 1, i + 1, k);
+					l, i, k);
+				find_iterative_sum(nums, l, i);
 			}
 		}
 	}
@@ -64,16 +75,17 @@ int find_negative_sum(vector <int>& nums, int K)
 	unordered_map <int, int> map;
 	bool found = false;
 
-	map[0] = 1;
+	map[0] = -1;
 
 	for (int i = 0; i < nums.size(); i++) {
 		sum += nums[i];
 		if (map.find(sum - K) != map.end()) {
 			found = true;
 			printf("Indexes %d to %d sum to %d\n",
-					map[sum - K] + 1, i + 1, K);
+					map[sum - K] + 1, i, K);
+			find_iterative_sum(nums, map[sum -K] + 1, i);
 		}
-		map[sum] = i + 1;
+		map[sum] = i;
 	}
 	if (!found) {
 		cout << "Sum doesn't exist in any subarray\n";
