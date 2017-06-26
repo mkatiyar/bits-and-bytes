@@ -8,7 +8,7 @@ using namespace std;
 class TrieNode {
 public:
 	bool isword;
-	struct TrieNode* child[26];
+	TrieNode* child[26];
 	TrieNode() {
 		for (int i = 0; i <  26; i++) {
 			child[i] = NULL;
