@@ -22,6 +22,7 @@ void three_way_partition(vector <int>&nums, int midvalue)
 		if (nums[j] < midvalue) {
 			swap(nums[i], nums[j]);
 			i++;
+			j++;
 		} else if (nums[j] > midvalue) {
 			swap(nums[j], nums[end]);
 			end--;
@@ -60,6 +61,7 @@ int main()
 	cout << "Enter the size of array :";
 	cin >> n;
 
+	srand(time(NULL));
 	populate_array(nums, n);
 
 	cout << "Initial array : ";
